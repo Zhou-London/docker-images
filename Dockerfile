@@ -46,6 +46,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libtbb-dev \
     libzmq3-dev \
     cppzmq-dev \
+    cland \
     && rm -rf /var/lib/apt/lists/*
 
 # Apache Arrow / Parquet
