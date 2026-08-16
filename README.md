@@ -20,6 +20,19 @@ tree they are mounted into.
 Both start from `ubuntu:24.04`, set `TZ=Asia/Shanghai` and `LANG=C.UTF-8`, and
 land in `/work` with a bash shell.
 
+### Lakehouse
+
+Images for the Iceberg lakehouse in `apps/lakehouse` (MinIO + Lakekeeper +
+Postgres + DuckDB, orchestrated by that project's compose file):
+
+| Image | Dockerfile | Purpose |
+|---|---|---|
+| `lakehouse/minio` | [`Dockerfiles/lakehouse-minio/Dockerfile`](Dockerfiles/lakehouse-minio/Dockerfile) | Object store; Parquet data and Iceberg metadata. |
+| `lakehouse/mc` | [`Dockerfiles/lakehouse-mc/Dockerfile`](Dockerfiles/lakehouse-mc/Dockerfile) | One-shot MinIO provisioning (bucket, STS user). |
+| `lakehouse/postgres` | [`Dockerfiles/lakehouse-postgres/Dockerfile`](Dockerfiles/lakehouse-postgres/Dockerfile) | Lakekeeper's metadata database. |
+| `lakehouse/lakekeeper` | [`Dockerfiles/lakehouse-lakekeeper/Dockerfile`](Dockerfiles/lakehouse-lakekeeper/Dockerfile) | Iceberg REST catalog. |
+| `lakehouse/duckdb` | [`Dockerfiles/lakehouse-duckdb/Dockerfile`](Dockerfiles/lakehouse-duckdb/Dockerfile) | Query engine, catalog init job, and smoke test. |
+
 ### What's inside
 
 - **Toolchain** — `build-essential`, `g++`, `clang`, `clangd`, `clang-format`,
@@ -57,4 +70,32 @@ volumes/        persistent service data (QuestDB) — gitignored
 
 `apps/` and `volumes/` are deliberately untracked: the projects under `apps/`
 are separate repositories ([nlib](https://github.com/Zhou-London/nlib),
-`orderbook`), and `volumes/` holds database state that has no business in git.
+[orderbook](https://github.com/Zhou-London/nqbook),
+[lakehouse](https://github.com/Zhou-London/nqlake)), and `volumes/` holds
+database state that has no business in git.
+
+## Releases
+
+### 2026-08-16
+
+- **The five `lakehouse-*` images**, the container half of the Iceberg
+  lakehouse in `apps/lakehouse`: MinIO and its `mc` provisioning client,
+  Postgres 17 for catalog metadata, Lakekeeper v0.13.1 as the Iceberg REST
+  catalog, and DuckDB v1.5.5 as the query engine.
+- Four are a pinned `FROM` and the reason for the pin. `lakehouse-duckdb` is a
+  real build on `ubuntu:24.04` — the distroless upstream image has no shell,
+  and the stack runs bootstrap and smoke-test scripts inside this container. It
+  bakes in the `httpfs` and `iceberg` extensions so a running container never
+  needs `extensions.duckdb.org`.
+
+### 2026-08-15
+
+- **`cpp-dev`**, the C++23 development image: toolchain, Boost, Arrow and
+  Parquet from Apache's own APT repository, ZeroMQ, Protobuf, the compression
+  libraries, and GoogleTest/Benchmark.
+- Fixed `clangd`, which had been misspelled `cland` in the `apt-get install`
+  list and so had never actually been installed — a typo there fails only on
+  the next rebuild, which is why package names now get checked against the
+  Ubuntu 24.04 archive before they land.
+- **`orderbook-deploy`** exists as a placeholder and is byte-identical to
+  `cpp-dev`. Slimming it to a runtime-only stage is still to do.
