@@ -71,8 +71,13 @@ volumes/        persistent service data (QuestDB) — gitignored
 `apps/` and `volumes/` are deliberately untracked: the projects under `apps/`
 are separate repositories ([nlib](https://github.com/Zhou-London/nlib),
 [orderbook](https://github.com/Zhou-London/nqbook),
-[lakehouse](https://github.com/Zhou-London/nqlake)), and `volumes/` holds
+[lakehouse](https://github.com/Zhou-London/nqlake),
+[util](https://github.com/Zhou-London/nq-util)), and `volumes/` holds
 database state that has no business in git.
+
+`util` is the exception to the mount: its tools run on the host, not in these
+images. It sits under `apps/` because it is part of the same stack, not
+because a container ever mounts it.
 
 ## Releases
 
