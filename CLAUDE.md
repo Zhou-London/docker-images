@@ -52,9 +52,10 @@ reason in the comment when you move a pin.
 
 `lakehouse-duckdb` is the one real build. It is on `ubuntu:24.04` rather than
 the distroless `duckdb/duckdb` image because the compose stack runs shell
-scripts in it (catalog bootstrap, smoke test) that need `bash` and `curl`, and
-it installs the `httpfs` and `iceberg` extensions at build time so a container
-never has to reach `extensions.duckdb.org` at run time. Keep both properties.
+scripts in it (catalog bootstrap, smoke test) that need `bash`, `curl`, and
+`jq`, and it installs the `httpfs` and `iceberg` extensions at build time so a
+container never has to reach `extensions.duckdb.org` at run time. Keep both
+properties.
 
 ## Commits
 

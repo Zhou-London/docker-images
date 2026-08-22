@@ -81,6 +81,14 @@ because a container ever mounts it.
 
 ## Releases
 
+### 2026-08-22
+
+- **`jq` in `lakehouse-duckdb`.** The image is where the lakehouse runs its
+  bootstrap and smoke-test scripts, and `lakekeeper-init` now reads the
+  warehouse's stored storage profile back to compare MinIO's endpoint against
+  the configured one — parsing that JSON with `grep` was what limited the
+  script to "does this warehouse exist" in the first place.
+
 ### 2026-08-16
 
 - **The five `lakehouse-*` images**, the container half of the Iceberg

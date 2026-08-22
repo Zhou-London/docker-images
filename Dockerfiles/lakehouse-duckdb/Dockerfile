@@ -1,7 +1,7 @@
 # Query engine and init client of the lakehouse. Built on Ubuntu instead of
 # the official distroless duckdb/duckdb image because the compose stack also
-# runs shell scripts in it (catalog bootstrap, smoke test), which need bash
-# and curl.
+# runs shell scripts in it (catalog bootstrap, smoke test), which need bash,
+# curl, and jq.
 #
 # The iceberg and httpfs extensions are installed at build time so the
 # container works without network access to extensions.duckdb.org.
@@ -14,6 +14,7 @@ ENV TZ=Asia/Shanghai \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
+    jq \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
